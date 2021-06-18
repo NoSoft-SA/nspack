@@ -98,5 +98,13 @@ module MesscadaApp
 
       scanned_carton_number
     end
+
+    def legacy_carton_number
+      raise Crossbeams::InfoError, 'Scan field empty.' if scanned_carton_number.nil_or_empty?
+
+      raise Crossbeams::InfoError, "#{scanned_carton_number} is not a recognised legacy carton number length." unless scanned_carton_number.length == 12
+
+      scanned_carton_number
+    end
   end
 end

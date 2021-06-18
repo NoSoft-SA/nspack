@@ -2,58 +2,76 @@
 
 module MesscadaApp
   class ScanCartonOrPallet < BaseService
-    attr_reader :repo, :pallet_was_scanned, :scanned_number, :id
+    attr_reader :repo, :mode, :scanned_number
 
-    def initialize(scanned_number)
-      @pallet_was_scanned = false
+    def initialize(scanned_number, mode = nil)
+      @mode = mode
       @scanned_number = scanned_number
       @repo = MesscadaApp::MesscadaRepo.new
     end
 
+    TASKS = {
+      pallet: :resolve_pallet,
+      carton: :resolve_carton,
+      legacy_carton: :resolve_legacy_carton
+    }.freeze
+
     def call
-      return failed_response(message) if scanned_number.nil_or_empty?
+      return failed_response('Scanned number empty') if scanned_number.nil_or_empty?
 
-      scan_value
-      carton_or_pallet_id
+      determine_mode if mode.nil?
 
-      response
+      resolve_mode = TASKS[mode]
+      raise ArgumentError, "Scan mode \"#{mode}\" is unknown for #{self.class}." if resolve_mode.nil?
+
+      send(resolve_mode)
     rescue Crossbeams::InfoError => e
       failed_response(e.message)
     end
 
     private
 
+    def determine_mode
+      @mode = case scanned_number.length
+              when 1...8
+                :carton
+              when 12
+                :legacy_carton
+              else
+                :pallet
+              end
+    end
+
     def response
-      instance = ScanCartonOrPalletEntity.new(id: id, pallet_was_scanned: pallet_was_scanned, scanned_number: scanned_number)
-      return failed_response(message, instance) unless id
+      instance = ScanCartonOrPalletEntity.new(id: @id, pallet_was_scanned: @pallet_was_scanned, scanned_number: @scanned_number)
+      return failed_response('Failed to scan number!') unless @id
 
-      success_response(message, instance)
+      success_response("Successfully scanned #{@mode} number", instance)
     end
 
-    def scan_value
-      if scanned_number.length > 8
-        @scanned_number = MesscadaApp::ScannedPalletNumber.new(scanned_pallet_number: scanned_number).pallet_number
-        @pallet_was_scanned = true
-      else
-        @scanned_number = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: scanned_number).carton_number
-        @pallet_was_scanned = false
-      end
+    def resolve_pallet
+      @scanned_number = MesscadaApp::ScannedPalletNumber.new(scanned_pallet_number: scanned_number).pallet_number
+      @id = repo.get_id(:pallets, pallet_number: scanned_number)
+      @pallet_was_scanned = true
+      @mode = :pallet
+      response
     end
 
-    def carton_or_pallet_id
-      @id = if @pallet_was_scanned
-              repo.get_id(:pallets, pallet_number: scanned_number)
-            else
-              repo.get_id(:cartons, carton_label_id: scanned_number)
-            end
+    def resolve_carton
+      @scanned_number = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: scanned_number).carton_number
+      @id = repo.get_id(:cartons, carton_label_id: scanned_number)
+      @pallet_was_scanned = false
+      @mode = :carton
+      response
     end
 
-    def message
-      return 'scanned number not given' if scanned_number.nil_or_empty?
-      return 'Successfully scanned pallet number' if pallet_was_scanned & !id.nil?
-      return 'Successfully scanned carton number' if !pallet_was_scanned & !id.nil?
-
-      'Failed to scan number!'
+    def resolve_legacy_carton
+      @scanned_number = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: scanned_number).legacy_carton_number
+      carton_label_id = repo.get_value(:legacy_barcodes, :carton_label_id, legacy_carton_number: scanned_number)
+      @id = repo.get_id(:cartons, carton_label_id: carton_label_id)
+      @pallet_was_scanned = false
+      @mode = :legacy_carton
+      response
     end
   end
 end
