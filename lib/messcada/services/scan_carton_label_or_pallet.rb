@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module MesscadaApp
-  class ScanCartonOrPallet < BaseService
+  class ScanCartonLabelOrPallet < BaseService
     attr_reader :repo, :mode, :scanned_number, :formatted_number
 
     def initialize(scanned_number, mode = nil)
@@ -13,8 +13,8 @@ module MesscadaApp
 
     TASKS = {
       pallet: :resolve_pallet,
-      carton: :resolve_carton,
-      legacy_carton: :resolve_legacy_carton
+      carton_label: :resolve_carton_label,
+      legacy_carton_label: :resolve_legacy_carton_label
     }.freeze
 
     def call # rubocop:disable Metrics/AbcSize
@@ -35,16 +35,16 @@ module MesscadaApp
     def determine_mode
       @mode = case scanned_number.length
               when 1...8
-                :carton
+                :carton_label
               when 12
-                :legacy_carton
+                :legacy_carton_label
               else
                 :pallet
               end
     end
 
     def response
-      instance = ScanCartonOrPalletEntity.new(
+      instance = ScanCartonLabelOrPalletEntity.new(
         id: @id,
         pallet_was_scanned: @pallet_was_scanned,
         scanned_number: @scanned_number,
@@ -62,16 +62,15 @@ module MesscadaApp
       response
     end
 
-    def resolve_carton
+    def resolve_carton_label
       @formatted_number = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: scanned_number).carton_number
-      @id = repo.get_id(:cartons, carton_label_id: formatted_number)
+      @id = repo.get_id(:carton_labels, id: formatted_number)
       response
     end
 
-    def resolve_legacy_carton
+    def resolve_legacy_carton_label
       @formatted_number = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: scanned_number).legacy_carton_number
-      carton_label_id = repo.get_value(:legacy_barcodes, :carton_label_id, legacy_carton_number: formatted_number)
-      @id = repo.get_id(:cartons, carton_label_id: carton_label_id)
+      @id = repo.get_value(:legacy_barcodes, :carton_label_id, legacy_carton_number: formatted_number)
       response
     end
   end

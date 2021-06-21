@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module MesscadaApp
-  class ScanCartonOrPalletEntity < Dry::Struct
+  class ScanCartonLabelOrPalletEntity < Dry::Struct
     attribute :id, Types::Integer
     attribute :pallet_was_scanned, Types::Bool
     attribute :formatted_number, Types::String
@@ -11,11 +11,11 @@ module MesscadaApp
       pallet_was_scanned
     end
 
-    def carton?
+    def carton_label?
       !pallet_was_scanned
     end
 
-    def carton_id
+    def carton_label_id
       pallet_was_scanned ? nil : id
     end
 
