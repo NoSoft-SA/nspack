@@ -6,7 +6,7 @@ module MesscadaApp
     attribute :pallet_was_scanned, Types::Bool
     attribute :formatted_number, Types::String
     attribute :scanned_number, Types::String
-
+    attribute :scanned_type, Types::String
     def pallet?
       pallet_was_scanned
     end

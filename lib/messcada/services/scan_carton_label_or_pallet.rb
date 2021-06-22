@@ -48,7 +48,8 @@ module MesscadaApp
         id: @id,
         pallet_was_scanned: @pallet_was_scanned,
         scanned_number: @scanned_number,
-        formatted_number: @formatted_number
+        formatted_number: @formatted_number,
+        scanned_type: @mode.to_s
       )
       return failed_response('Failed to scan number') unless @id
 
