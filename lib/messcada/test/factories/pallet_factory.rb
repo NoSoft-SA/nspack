@@ -7,7 +7,7 @@ module MesscadaApp
       # return id unless id.nil?
 
       default = {
-        pallet_number: Faker::Lorem.unique.word,
+        pallet_number: Faker::Number.number(digits: 9),
         exit_ref: Faker::Lorem.word,
         scrapped_at: '2010-01-01 12:00',
         location_id: create_location,

@@ -27,7 +27,7 @@ module MesscadaApp
       res = carton_verification
       raise Crossbeams::InfoError, unwrap_failed_response(res) unless res.success
 
-      success_response("Verified #{scanned_params[:scanned_type]} : #{scanned_number} successfully")
+      success_response("Successfully verified #{scanned_params[:scanned_type]}: #{scanned_number}")
     end
 
     private

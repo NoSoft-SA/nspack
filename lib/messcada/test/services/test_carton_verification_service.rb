@@ -33,20 +33,25 @@ module MesscadaApp
     include FinishedGoodsApp::LoadFactory
     include FinishedGoodsApp::VoyageFactory
 
-    def test_carton_label
-      create_carton_label
+    def test_carton_verification_scan_carton_label
+      carton_label_id = create_carton_label
+
+      params = { carton_number: carton_label_id }
+      res = MesscadaApp::CartonVerification.call(user, params)
+
+      # p res
+      # p DB[:cartons].where(carton_label_id: carton_label_id).all
     end
 
-    # def test_carton
-    #   create_carton
-    # end
-    #
-    # def test_pallet_sequence
-    #   create_pallet_sequence
-    # end
+    def test_carton_verification_scan_pallet
+      pallet_id = create_pallet
+      pallet_number = DB[:pallets].where(id: pallet_id).get(:pallet_number)
+      # p pallet_number
+      params = { carton_number: pallet_number }
+      res = MesscadaApp::CartonVerification.call(user, params)
 
-    def test_pallet
-      create_pallet
+      # p res
+      # p DB[:pallets].where(id: pallet_id).all
     end
 
     def user
