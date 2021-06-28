@@ -28,11 +28,9 @@ module MesscadaApp
 
     def test_create_pallet
       carton_label_id = create_carton_label(pallet_number: Faker::Number.number(digits: 9))
-      params = { carton_id: create_carton(carton_label_id: carton_label_id) }
-      params[:carton_quantity] = 1
-      params[:carton_equals_pallet] = true
+      carton_id = create_carton(carton_label_id: carton_label_id)
 
-      res = MesscadaApp::CreateCartonEqualsPalletPallet.call(current_user, params)
+      res = MesscadaApp::CreateCartonEqualsPalletPallet.call(current_user, carton_id)
       assert res.success, 'Should be able to create Pallet'
     end
   end

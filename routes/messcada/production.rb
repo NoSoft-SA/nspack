@@ -75,7 +75,7 @@ class Nspack < Roda
       # view-source:http://192.168.50.106:9296/messcada/production/carton_verification?carton_number=123&device=CLM-01-B01
       # --------------------------------------------------------------------------
       r.get do
-        res = interactor.carton_verification(params)
+        res = interactor.carton_verification(params[:carton_number])
         feedback = if res.success
                      MesscadaApp::RobotFeedback.new(device: params[:device],
                                                     status: true,

@@ -6,7 +6,7 @@ module MesscadaApp
 
     def initialize(scanned_number, mode = nil)
       @mode = mode
-      @scanned_number = scanned_number
+      @scanned_number = scanned_number.to_s
       @pallet_was_scanned = false
       @repo = MesscadaApp::MesscadaRepo.new
     end

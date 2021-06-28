@@ -393,7 +393,7 @@ class Nspack < Roda
           carton_id = (interactor.find_carton_by_carton_label_id(carton_number) || {})[:id]
           unless AppConst::CARTON_VERIFICATION_REQUIRED
             if carton_id.nil?
-              res = messcada_interactor.carton_verification(carton_number: carton_number)
+              res = messcada_interactor.carton_verification(carton_number)
               unless res.success
                 store_locally(:errors, errors: res.errors, error_message: unwrap_failed_response(res))
                 r.redirect('/rmd/production/palletizing/create_new_pallet')
@@ -576,7 +576,7 @@ class Nspack < Roda
         carton_id = (interactor.find_carton_by_carton_label_id(carton_number) || {})[:id]
         unless AppConst::CARTON_VERIFICATION_REQUIRED
           if carton_id.nil?
-            res = messcada_interactor.carton_verification(carton_number: carton_number)
+            res = messcada_interactor.carton_verification(carton_number)
             unless res.success
               store_locally(:current_form_state, carton_quantity: carton_quantity)
               store_locally(:errors, errors: res.errors, error_message: unwrap_failed_response(res))
@@ -792,7 +792,7 @@ class Nspack < Roda
             carton_number = (carton = interactor.find_carton_by_carton_label_id(params[:pallet][:carton_number])) ? carton[:id] : nil
             unless AppConst::CARTON_VERIFICATION_REQUIRED
               unless carton_number
-                res = messcada_interactor.carton_verification(carton_number: params[:pallet][:carton_number])
+                res = messcada_interactor.carton_verification(params[:pallet][:carton_number])
                 unless res.success # rubocop:disable Metrics/BlockNesting
                   store_locally(:errors, errors: res.errors, error_message: unwrap_failed_response(res))
                   r.redirect("/rmd/production/palletizing/edit_pallet_sequence_view/#{id}")

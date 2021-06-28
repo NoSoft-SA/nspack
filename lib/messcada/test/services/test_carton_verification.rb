@@ -35,11 +35,11 @@ module MesscadaApp
     def test_carton_verification_scan_carton_label
       carton_label_id = create_carton_label
 
-      params = { carton_number: carton_label_id }
-      res = MesscadaApp::CartonVerification.call(current_user, params)
+      scanned_number = carton_label_id
+      res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
       assert res.success, 'Should be able to verify carton'
 
-      res = MesscadaApp::CartonVerification.call(current_user, params)
+      res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
       assert res.success, 'Revalidation should return success'
     end
 
@@ -47,12 +47,23 @@ module MesscadaApp
       pallet_id = create_pallet
       pallet_number = DB[:pallets].where(id: pallet_id).get(:pallet_number)
 
-      params = { carton_number: pallet_number }
-      res = MesscadaApp::CartonVerification.call(current_user, params)
+      create_carton_label(pallet_number: pallet_number)
+
+      scanned_number = pallet_number
+      res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
       assert res.success, 'Should be able to verify pallet'
 
-      res = MesscadaApp::CartonVerification.call(current_user, params)
+      res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
       assert res.success, 'Revalidation should return success'
+    end
+
+    def test_carton_verification_scan_pallet_fail
+      pallet_id = create_pallet
+      pallet_number = DB[:pallets].where(id: pallet_id).get(:pallet_number)
+
+      scanned_number = pallet_number
+      res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
+      refute res.success, 'Should not be able to verify pallet, pallet number not on carton label'
     end
   end
 end

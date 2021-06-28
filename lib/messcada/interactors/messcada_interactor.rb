@@ -44,7 +44,7 @@ module MesscadaApp
       # This should only be called when COMBINE_CARTON_AND_PALLET_VERIFICATION is true
       scanned_carton_number = params[:carton_number]
 
-      res = carton_verification(carton_number: scanned_carton_number)
+      res = carton_verification(scanned_carton_number)
       return failed_response(res.message) unless res.success
 
       args = repo.parse_pallet_or_carton_number({ scanned_number: scanned_carton_number })
@@ -272,13 +272,10 @@ module MesscadaApp
       failed_response(e.message)
     end
 
-    def carton_verification(params) # rubocop:disable Metrics/AbcSize
-      res = CartonAndPalletVerificationSchema.call(params)
-      return validation_failed_response(res) if res.failure?
-
+    def carton_verification(scanned_number)  # rubocop:disable Metrics/AbcSize
       cvl_res = nil
       repo.transaction do
-        cvl_res = MesscadaApp::CartonVerification.call(@user, res)
+        cvl_res = MesscadaApp::CartonVerification.call(@user, scanned_number)
         log_transaction
       end
       cvl_res

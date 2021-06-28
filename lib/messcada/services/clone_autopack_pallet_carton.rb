@@ -84,7 +84,7 @@ module MesscadaApp
     end
 
     def get_palletizing_carton(carton_number)
-      MesscadaApp::CartonVerification.call(@user, { carton_number: carton_number }, palletizer_identifier, palletizing_bay_resource_id) unless verified_carton_number?(carton_number)
+      MesscadaApp::CartonVerification.call(@user, carton_number, palletizer_identifier, palletizing_bay_resource_id) unless verified_carton_number?(carton_number)
       carton_number_carton_id(carton_number)
     end
 

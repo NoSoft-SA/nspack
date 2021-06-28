@@ -12,10 +12,6 @@ module MesscadaApp
     required(:device).filled(Types::StrippedString)
   end
 
-  CartonAndPalletVerificationSchema = Dry::Schema.Params do
-    required(:carton_number).filled(:integer)
-  end
-
   CartonVerificationAndWeighingSchema = Dry::Schema.Params do
     required(:carton_number).filled(:integer)
     required(:device).filled(Types::StrippedString)
