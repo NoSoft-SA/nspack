@@ -6,15 +6,13 @@ module ProductionApp
       id = get_available_factory_record(:plant_resources, opts)
       return id unless id.nil?
 
-      plant_resource_type_id = create_plant_resource_type
-      system_resource_id = create_system_resource
+      opts[:plant_resource_type_id] ||= create_plant_resource_type
+      opts[:system_resource_id] ||= create_system_resource
+      opts[:location_id] ||= create_location
 
       default = {
-        plant_resource_type_id: plant_resource_type_id,
-        system_resource_id: system_resource_id,
         plant_resource_code: Faker::Lorem.unique.word,
         description: Faker::Lorem.word,
-        location_id: nil,
         resource_properties: nil,
         active: true,
         created_at: '2010-01-01 12:00',
@@ -40,12 +38,9 @@ module ProductionApp
       id = get_available_factory_record(:system_resources, opts)
       return id unless id.nil?
 
-      system_resource_type_id = create_system_resource_type
-      plant_resource_type_id = create_plant_resource_type
-
+      opts[:system_resource_type_id] ||= create_system_resource_type
+      opts[:plant_resource_type_id] ||= create_plant_resource_type
       default = {
-        plant_resource_type_id: plant_resource_type_id,
-        system_resource_type_id: system_resource_type_id,
         system_resource_code: Faker::Lorem.unique.word,
         description: Faker::Lorem.word,
         active: true,

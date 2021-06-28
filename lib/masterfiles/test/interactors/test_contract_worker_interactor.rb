@@ -5,6 +5,7 @@ require File.join(File.expand_path('../../../../test', __dir__), 'test_helper')
 module MasterfilesApp
   class TestContractWorkerInteractor < MiniTestWithHooks
     include ProductionApp::ResourceFactory
+    include MasterfilesApp::LocationFactory
     include HRFactory
 
     def test_repo

@@ -20,7 +20,6 @@ module MesscadaApp
     include MasterfilesApp::GeneralFactory
     include MasterfilesApp::MarketingFactory
     include MasterfilesApp::PackagingFactory
-    include MasterfilesApp::LabelTemplateFactory
     include MasterfilesApp::HRFactory
     include MasterfilesApp::LocationFactory
     include MasterfilesApp::DepotFactory

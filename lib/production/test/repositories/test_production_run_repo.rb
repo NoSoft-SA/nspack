@@ -9,6 +9,7 @@ module ProductionApp
     include MasterfilesApp::CultivarFactory
     include MasterfilesApp::FarmFactory
     include MasterfilesApp::CalendarFactory
+    include MasterfilesApp::LocationFactory
     include ResourceFactory
     include ProductSetupFactory
     include ProductionRunFactory

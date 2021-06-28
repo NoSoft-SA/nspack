@@ -187,5 +187,21 @@ module MasterfilesApp
       }
       DB[:pm_marks].insert(default.merge(opts))
     end
+
+    def create_label_template(opts = {})
+      id = get_available_factory_record(:label_templates, opts)
+      return id unless id.nil?
+
+      default = {
+        label_template_name: Faker::Lorem.unique.word,
+        description: Faker::Lorem.word,
+        application: Faker::Lorem.word,
+        variables: BaseRepo.new.array_of_text_for_db_col(%w[A B C]),
+        active: true,
+        created_at: '2010-01-01 12:00',
+        updated_at: '2010-01-01 12:00'
+      }
+      DB[:label_templates].insert(default.merge(opts))
+    end
   end
 end

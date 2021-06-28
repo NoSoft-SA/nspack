@@ -16,7 +16,6 @@ module MesscadaApp
     include MasterfilesApp::TargetMarketFactory
     include MasterfilesApp::MarketingFactory
     include MasterfilesApp::GeneralFactory
-    include MasterfilesApp::LabelTemplateFactory
     include ProductionApp::ResourceFactory
     include ProductionApp::ProductionRunFactory
     include ProductionApp::ProductSetupFactory
