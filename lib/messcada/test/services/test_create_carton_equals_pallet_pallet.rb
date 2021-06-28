@@ -3,7 +3,7 @@
 require File.join(File.expand_path('../../../../test', __dir__), 'test_helper')
 
 module MesscadaApp
-  class TestCreateCartonEqualsPalletPallet < Minitest::Test
+  class TestCreateCartonEqualsPalletPallet < MiniTestWithHooks
     include Crossbeams::Responses
     include CartonLabelFactory
     include CartonFactory
@@ -19,7 +19,7 @@ module MesscadaApp
     include MasterfilesApp::TargetMarketFactory
     include MasterfilesApp::GeneralFactory
     include MasterfilesApp::MarketingFactory
-    # include MasterfilesApp::PackagingFactory
+    include MasterfilesApp::PackagingFactory
 
     def test_create_pallet
       carton_id = create_carton

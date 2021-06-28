@@ -38,7 +38,10 @@ module MesscadaApp
 
       params = { carton_number: carton_label_id }
       res = MesscadaApp::CartonVerification.call(user, params)
+      assert res.success, 'Should be able to verify carton'
 
+      res = MesscadaApp::CartonVerification.call(user, params)
+      assert res.success, 'Revalidation should return success'
       # p res
       # p DB[:cartons].where(carton_label_id: carton_label_id).all
     end
@@ -49,6 +52,10 @@ module MesscadaApp
       # p pallet_number
       params = { carton_number: pallet_number }
       res = MesscadaApp::CartonVerification.call(user, params)
+      assert res.success, 'Should be able to verify pallet'
+
+      res = MesscadaApp::CartonVerification.call(user, params)
+      assert res.success, 'Revalidation should return success'
 
       # p res
       # p DB[:pallets].where(id: pallet_id).all
