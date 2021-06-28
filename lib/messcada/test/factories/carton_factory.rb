@@ -26,7 +26,7 @@ module MesscadaApp
       DB[:cartons].insert(default.merge(opts))
     end
 
-    def create_carton_label(opts = {})
+    def create_carton_label(opts = {}) # rubocop:disable Metrics/AbcSize
       # id = get_available_factory_record(:carton_labels, opts)
       # return id unless id.nil?
 

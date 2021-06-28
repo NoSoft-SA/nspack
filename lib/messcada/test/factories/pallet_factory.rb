@@ -2,7 +2,7 @@
 
 module MesscadaApp
   module PalletFactory # rubocop:disable Metrics/ModuleLength
-    def create_pallet(opts = {})
+    def create_pallet(opts = {}) # rubocop:disable Metrics/AbcSize
       # id = get_available_factory_record(:pallets, opts)
       # return id unless id.nil?
 
@@ -64,7 +64,7 @@ module MesscadaApp
       DB[:pallets].insert(default.merge(opts))
     end
 
-    def create_pallet_sequence(opts = {})
+    def create_pallet_sequence(opts = {}) # rubocop:disable Metrics/AbcSize
       # id = get_available_factory_record(:pallet_sequences, opts)
       # return id unless id.nil?
 
