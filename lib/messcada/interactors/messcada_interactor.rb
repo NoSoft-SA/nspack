@@ -475,8 +475,6 @@ module MesscadaApp
         changeset[:in_stock] = true
         changeset[:stock_created_at] = Time.now
       end
-
-      changeset[:batch_number] = params[:batch_number] if AppConst::CR_PROD.capture_batch_number_for_pallets?
       changeset
     end
 
