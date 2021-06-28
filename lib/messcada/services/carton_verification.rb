@@ -55,7 +55,7 @@ module MesscadaApp
 
     def find_carton_label_pallet_number(carton_label_id)
       pallet_sequence_id = repo.carton_label_carton_palletizing_sequence(carton_label_id)
-      pallet_sequence_id = repo.carton_label_scanned_from_carton_sequence(carton_label_id) if pallet_sequence_id.nil?
+      pallet_sequence_id ||= repo.carton_label_scanned_from_carton_sequence(carton_label_id)
 
       repo.get(:pallet_sequences, pallet_sequence_id, :pallet_number)
     end

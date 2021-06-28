@@ -123,7 +123,7 @@ module MesscadaApp
 
         scanned_pallet_number[-9, 9]
       when 15
-        # Last 9 digits. Number starts with "]C".
+        # 15 digits returns Last 9 digits. Number starts with "]C".
         raise Crossbeams::InfoError, "Pallet #{scanned_pallet_number} is not a recognised format for 15 digits." unless scanned_pallet_number.start_with?(']C')
 
         scanned_pallet_number[-9, 9]

@@ -12,7 +12,7 @@ module MasterfilesApp
         res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
         assert res.success, 'Should be able to scan a pallet'
         assert_equal scanned_number, res.instance[:scanned_number]
-        assert_equal '123456789', res.instance[:formatted_number]
+        assert_equal scanned_number[-9, 9], res.instance[:formatted_number]
         assert_equal 1, res.instance.pallet_id
         assert_nil res.instance.carton_label_id
       end
@@ -21,7 +21,7 @@ module MasterfilesApp
         res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
         assert res.success, 'Should be able to scan a pallet'
         assert_equal scanned_number, res.instance[:scanned_number]
-        assert_equal '123456789123456789', res.instance[:formatted_number]
+        assert_equal scanned_number[-18, 18], res.instance[:formatted_number]
         assert_equal 1, res.instance.pallet_id
         assert_nil res.instance.carton_label_id
       end
@@ -44,20 +44,21 @@ module MasterfilesApp
 
     def test_scan_carton
       BaseRepo.any_instance.stubs(:get_id).returns(1)
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(valid_carton_number)
+      scanned_number = valid_carton_number
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
       assert res.success, 'Should be able to scan a carton'
-      assert_equal valid_carton_number, res.instance[:scanned_number]
-      assert_equal valid_carton_number, res.instance[:formatted_number]
+      assert_equal scanned_number, res.instance[:scanned_number]
+      assert_equal scanned_number, res.instance[:formatted_number]
       assert_equal 1, res.instance.carton_label_id
       assert_nil res.instance.pallet_id
     end
 
     def test_scan_carton_with_mode
       BaseRepo.any_instance.stubs(:get_id).returns(1)
-
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(valid_carton_number, :carton_label)
+      scanned_number = valid_carton_number
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number, :carton_label)
       assert res.success, 'Should be able to scan a carton'
-      assert_equal valid_carton_number, res.instance[:scanned_number]
+      assert_equal scanned_number, res.instance[:scanned_number]
     end
 
     def test_scan_carton_fail
@@ -67,21 +68,21 @@ module MasterfilesApp
 
     def test_scan_legacy_carton
       BaseRepo.any_instance.stubs(:get_value).returns(1)
-
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(valid_legacy_carton_number)
+      scanned_number = valid_legacy_carton_number
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
       assert res.success, 'Should be able to scan a legacy carton'
-      assert_equal valid_legacy_carton_number, res.instance[:scanned_number]
-      assert_equal valid_legacy_carton_number, res.instance[:formatted_number]
+      assert_equal scanned_number, res.instance[:scanned_number]
+      assert_equal scanned_number, res.instance[:formatted_number]
       assert_equal 1, res.instance.carton_label_id
       assert_nil res.instance.pallet_id
     end
 
     def test_scan_legacy_carton_with_mode
       BaseRepo.any_instance.stubs(:get_value).returns(1)
-
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(valid_legacy_carton_number, :legacy_carton_label)
+      scanned_number = valid_legacy_carton_number
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number, :legacy_carton_label)
       assert res.success, 'Should be able to scan a legacy carton'
-      assert_equal valid_legacy_carton_number, res.instance[:scanned_number]
+      assert_equal scanned_number, res.instance[:scanned_number]
     end
 
     def test_scan_legacy_carton_fail
@@ -93,43 +94,43 @@ module MasterfilesApp
 
     def valid_9_digit_pallet_numbers
       [
-        '123456789', # Valid pallet numbers have 9 or 18 digits.
-        '46123456789', # Last 9 digits. Number is prefixed with "46", "47", "48" or "49".
-        '47123456789',
-        '48123456789',
-        '49123456789',
-        ']C1234123456789' # Last 9 digits. Number starts with "C".
+        Faker::Number.number(digits: 9).to_s, # Valid pallet numbers have 9 or 18 digits.
+        "46#{Faker::Number.number(digits: 9)}", # Last 9 digits. Number is prefixed with "46", "47", "48" or "49".
+        "47#{Faker::Number.number(digits: 9)}", # Last 9 digits. Number is prefixed with "46", "47", "48" or "49".
+        "48#{Faker::Number.number(digits: 9)}", # Last 9 digits. Number is prefixed with "46", "47", "48" or "49".
+        "49#{Faker::Number.number(digits: 9)}", # Last 9 digits. Number is prefixed with "46", "47", "48" or "49".
+        "]C#{Faker::Number.number(digits: 13)}" # 15 digits returns Last 9 digits. Number starts with "]C".
       ]
     end
 
     def valid_18_digit_pallet_numbers
       [
-        '123456789123456789', # Valid pallet numbers have 18 digits.
-        '0123456789123456789', # 18 digits prefixed with "0".
-        '01123456789123456789', # 20 digits - discard the (variable) prefix and use the last 18 digits.
-        '012123456789123456789', # 21 digits - discard the (variable) prefix and use the last 18 digits.
-        '01234123456789123456789' # 23 digits - discard the (variable) prefix and use the last 18 digits.
+        Faker::Number.number(digits: 18).to_s, # Valid pallet numbers have 18 digits.
+        "0#{Faker::Number.number(digits: 18)}", # 18 digits prefixed with "0".
+        Faker::Number.number(digits: 20).to_s, # 20 digits - discard the (variable) prefix and use the last 18 digits.
+        Faker::Number.number(digits: 21).to_s, # 21 digits - discard the (variable) prefix and use the last 18 digits.
+        Faker::Number.number(digits: 23).to_s # 23 digits - discard the (variable) prefix and use the last 18 digits.
       ]
     end
 
     def invalid_pallet_number
-      '123'
+      Faker::Number.number(digits: 3).to_s
     end
 
     def valid_carton_number
-      '1234567'
+      Faker::Number.number(digits: 7).to_s
     end
 
     def invalid_carton_number
-      '12345678'
+      Faker::Number.number(digits: 8).to_s
     end
 
     def valid_legacy_carton_number
-      '123456789012'
+      Faker::Number.number(digits: 12).to_s
     end
 
     def invalid_legacy_carton_number
-      '1234567890123'
+      Faker::Number.number(digits: 13).to_s
     end
   end
 end
