@@ -32,12 +32,8 @@ module MesscadaApp
       params[:carton_quantity] = 1
       params[:carton_equals_pallet] = true
 
-      res = MesscadaApp::CreateCartonEqualsPalletPallet.call(user, params)
+      res = MesscadaApp::CreateCartonEqualsPalletPallet.call(current_user, params)
       assert res.success, 'Should be able to create Pallet'
-    end
-
-    def user
-      OpenStruct.new(user_name: 'Test')
     end
   end
 end
