@@ -367,16 +367,5 @@ module FinishedGoodsApp
         .where(Sequel[:vehicle_jobs][:id] => vehicle_job_id)
         .get(:location_long_code)
     end
-
-    def valid_pallet_numbers_for_govt_inspections
-      pallet_ids = DB[:pallet_sequences].where(verification_passed: false).select_map(:pallet_id)
-      DB[:pallets].where(shipped: false).exclude(id: pallet_ids).select_map(:pallet_number)
-    end
-
-    def govt_inspection_sheet_packhouse_code(id)
-      pallet_id = DB[:govt_inspection_pallets].where(govt_inspection_sheet_id: id).get(:pallet_id)
-      ph_id = get_value(:pallets, :plt_packhouse_resource_id, id: pallet_id)
-      get_value(:plant_resources, :plant_resource_code, id: ph_id)
-    end
   end
 end
