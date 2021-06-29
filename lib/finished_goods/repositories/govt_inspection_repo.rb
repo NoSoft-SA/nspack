@@ -344,23 +344,6 @@ module FinishedGoodsApp
       !DB[query, govt_inspection_sheet_id].single_value
     end
 
-    def scan_pallet_or_carton(params)
-      args = MesscadaApp::MesscadaRepo.new.parse_pallet_or_carton_number(params)
-      if args[:carton_number]
-        args[:carton_id] = get_id(:cartons, carton_label_id: args[:carton_number])
-        pallet_sequence_id = get(:cartons, args[:carton_id], :pallet_sequence_id)
-        args[:pallet_id] = get(:pallet_sequences, pallet_sequence_id, :pallet_id)
-      end
-      if args[:pallet_number]
-        args[:pallet_id] = get_id(:pallets, pallet_number: args[:pallet_number])
-        args[:carton_id] = nil
-      end
-
-      raise Crossbeams::InfoError, 'Pallet not found.' if args[:pallet_id].nil?
-
-      args
-    end
-
     def valid_carton_for_pallet?(pallet_number, carton_number)
       # exists?(:carton_labels, id: carton_number, pallet_number: pallet_number)
       !DB[:pallets]

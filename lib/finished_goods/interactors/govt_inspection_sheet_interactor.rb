@@ -448,8 +448,11 @@ module FinishedGoodsApp
     end
 
     def validate_add_pallet_govt_inspection_params(id, params) # rubocop:disable Metrics/AbcSize
-      attrs = repo.scan_pallet_or_carton(params)
-      pallet_number = repo.get(:pallets, attrs[:pallet_id], :pallet_number)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(params[:scanned_number])
+      return res unless res.success
+
+      scanned = res.instance
+      pallet_number = scanned.pallet_number
 
       check_pallet!(:not_shipped, pallet_number)
       check_pallet!(:not_failed_otmc, pallet_number)
@@ -457,14 +460,16 @@ module FinishedGoodsApp
       check_pallet!(:verification_passed, pallet_number)
       check_pallet!(:pallet_weight, pallet_number)
 
-      attrs[:govt_inspection_sheet_id] = id
-      if repo.get(:govt_inspection_sheets, attrs[:govt_inspection_sheet_id], :reinspection)
+      if repo.get(:govt_inspection_sheets, id, :reinspection)
         check_pallet!(:inspected, pallet_number)
       else
         check_pallet!(:not_on_inspection_sheet, pallet_number)
       end
 
-      res = CreateGovtInspectionPalletSchema.call(attrs)
+      params[:pallet_id] = scanned.pallet_id
+      params[:carton_id] = scanned.carton_id
+      params[:govt_inspection_sheet_id] = id
+      res = CreateGovtInspectionPalletSchema.call(params)
       return unwrap_failed_response(validation_failed_response(res)) if res.failure?
 
       success_response('Passed Validation', res.to_h)
