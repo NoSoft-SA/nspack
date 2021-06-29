@@ -34,10 +34,10 @@ module MesscadaApp
       @scanned = scanned.to_h
 
       if scanned.pallet?
-        @pallet_number = scanned.formatted_number
+        @pallet_number = scanned.pallet_number
         @carton_label_id = repo.carton_label_id_for_pallet_no(pallet_number)
       else
-        @carton_label_id = scanned.id
+        @carton_label_id = scanned.carton_label_id
         pallet_sequence_id = repo.carton_label_carton_palletizing_sequence(carton_label_id)
         pallet_sequence_id ||= repo.carton_label_scanned_from_carton_sequence(carton_label_id)
         @pallet_number = repo.get(:pallet_sequences, pallet_sequence_id, :pallet_number)

@@ -2,11 +2,11 @@
 
 module MesscadaApp
   class ScanCartonLabelOrPallet < BaseService
-    attr_reader :repo, :mode, :scanned_number, :formatted_number
+    attr_reader :repo, :params, :mode, :scanned_number, :formatted_number
 
-    def initialize(scanned_number, mode = nil)
-      @mode = mode
-      @scanned_number = scanned_number.to_s
+    def initialize(params)
+      @params = params
+      @params = { scanned_number: params } unless params.is_a? Hash
       @pallet_was_scanned = false
       @repo = MesscadaApp::MesscadaRepo.new
     end
@@ -14,13 +14,12 @@ module MesscadaApp
     TASKS = {
       pallet: :resolve_pallet,
       carton_label: :resolve_carton_label,
-      legacy_carton_label: :resolve_legacy_carton_label
+      legacy_carton_number: :resolve_legacy_carton_number
     }.freeze
 
-    def call # rubocop:disable Metrics/AbcSize
+    def call
+      parse_params
       return failed_response('Scanned number empty') if scanned_number.nil_or_empty?
-
-      determine_mode if mode.nil?
 
       resolve_mode = TASKS[mode]
       raise ArgumentError, "Scan mode \"#{mode}\" is unknown for #{self.class}." if resolve_mode.nil?
@@ -32,15 +31,35 @@ module MesscadaApp
 
     private
 
+    def parse_params
+      valid_keys = { pallet_number: :pallet,
+                     carton_number: :carton_label,
+                     carton_label_id: :carton_label,
+                     legacy_carton_number: :legacy_carton_number,
+                     scanned_number: nil }
+
+      valid_keys.each do |k, v|
+        next unless scanned_number.nil_or_empty?
+
+        @scanned_number = params.delete(k).to_s
+        @mode = v
+      end
+
+      @mode ||= determine_mode
+
+      invalid_keys = params.keys
+      raise ArgumentError, "Invalid argument: #{invalid_keys}" unless invalid_keys.empty?
+    end
+
     def determine_mode
-      @mode = case scanned_number.length
-              when 1...8
-                :carton_label
-              when 12
-                :legacy_carton_label
-              else
-                :pallet
-              end
+      case scanned_number.length
+      when 1...8
+        :carton_label
+      when 12
+        :legacy_carton_number
+      else
+        :pallet
+      end
     end
 
     def response
@@ -69,7 +88,7 @@ module MesscadaApp
       response
     end
 
-    def resolve_legacy_carton_label
+    def resolve_legacy_carton_number
       @formatted_number = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: scanned_number).legacy_carton_number
       @id = repo.get_value(:legacy_barcodes, :carton_label_id, legacy_carton_number: formatted_number)
       response

@@ -9,7 +9,7 @@ module MasterfilesApp
     def test_scan_pallet
       BaseRepo.any_instance.stubs(:get_id).returns(1)
       valid_9_digit_pallet_numbers.each do |scanned_number|
-        res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
+        res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
         assert res.success, 'Should be able to scan a pallet'
         assert_equal scanned_number, res.instance[:scanned_number]
         assert_equal scanned_number[-9, 9], res.instance[:formatted_number]
@@ -18,7 +18,7 @@ module MasterfilesApp
       end
 
       valid_18_digit_pallet_numbers.each do |scanned_number|
-        res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
+        res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
         assert res.success, 'Should be able to scan a pallet'
         assert_equal scanned_number, res.instance[:scanned_number]
         assert_equal scanned_number[-18, 18], res.instance[:formatted_number]
@@ -33,19 +33,19 @@ module MasterfilesApp
     end
 
     def test_scan_pallet_fail
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(invalid_pallet_number, :pallet)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(invalid_pallet_number)
       refute res.success, 'should fail validation'
     end
 
     def test_scan_pallet_with_carton_number_fail
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(valid_carton_number, :pallet)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(pallet_number: valid_carton_number)
       refute res.success, 'should fail validation'
     end
 
     def test_scan_carton
       BaseRepo.any_instance.stubs(:get_id).returns(1)
       scanned_number = valid_carton_number
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
       assert res.success, 'Should be able to scan a carton'
       assert_equal scanned_number, res.instance[:scanned_number]
       assert_equal scanned_number, res.instance[:formatted_number]
@@ -56,20 +56,20 @@ module MasterfilesApp
     def test_scan_carton_with_mode
       BaseRepo.any_instance.stubs(:get_id).returns(1)
       scanned_number = valid_carton_number
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number, :carton_label)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(carton_label_id: scanned_number)
       assert res.success, 'Should be able to scan a carton'
       assert_equal scanned_number, res.instance[:scanned_number]
     end
 
     def test_scan_carton_fail
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(invalid_carton_number)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: invalid_carton_number)
       refute res.success, 'should fail validation'
     end
 
     def test_scan_legacy_carton
       BaseRepo.any_instance.stubs(:get_value).returns(1)
       scanned_number = valid_legacy_carton_number
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
       assert res.success, 'Should be able to scan a legacy carton'
       assert_equal scanned_number, res.instance[:scanned_number]
       assert_equal scanned_number, res.instance[:formatted_number]
@@ -80,13 +80,13 @@ module MasterfilesApp
     def test_scan_legacy_carton_with_mode
       BaseRepo.any_instance.stubs(:get_value).returns(1)
       scanned_number = valid_legacy_carton_number
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number, :legacy_carton_label)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(legacy_carton_number: scanned_number)
       assert res.success, 'Should be able to scan a legacy carton'
       assert_equal scanned_number, res.instance[:scanned_number]
     end
 
     def test_scan_legacy_carton_fail
-      res = MesscadaApp::ScanCartonLabelOrPallet.call(invalid_legacy_carton_number, :legacy_carton_label)
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: invalid_legacy_carton_number)
       refute res.success, 'should fail validation'
     end
 
