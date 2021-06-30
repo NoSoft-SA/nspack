@@ -2,7 +2,7 @@
 
 module ProductionApp
   module ResourceFactory
-    def create_plant_resource(opts = {})
+    def create_plant_resource(opts = {}) # rubocop:disable Metrics/AbcSize
       id = get_available_factory_record(:plant_resources, opts)
       return id unless id.nil?
 
@@ -10,10 +10,15 @@ module ProductionApp
       opts[:system_resource_id] ||= create_system_resource
       opts[:location_id] ||= create_location
 
+      packhouse_no = opts.delete(:packhouse_no) || 1
+      gln = opts.delete(:gln) || '11111111'
+      phc = opts.delete(:phc) || '1111'
+      DB["create sequence public.gln_seq_for_#{gln}"].first
+
       default = {
         plant_resource_code: Faker::Lorem.unique.word,
         description: Faker::Lorem.word,
-        resource_properties: nil,
+        resource_properties: BaseRepo.new.hash_for_jsonb_col(packhouse_no: packhouse_no, gln: gln, phc: phc),
         active: true,
         created_at: '2010-01-01 12:00',
         updated_at: '2010-01-01 12:00'
