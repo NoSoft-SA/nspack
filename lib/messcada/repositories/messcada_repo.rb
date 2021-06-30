@@ -658,21 +658,21 @@ module MesscadaApp
         .get(:cultivar_code)
     end
 
-    def parse_pallet_or_carton_number(res = {})
-      # TODO - replace method with ScanCartonLabelOrPallet service
-        params = res.to_h
-        if params[:pallet_number]
-          params[:pallet_number] = MesscadaApp::ScannedPalletNumber.new(scanned_pallet_number: params[:pallet_number]).pallet_number
-          return params
-        end
-        raise Crossbeams::InfoError, 'scanned number not given' if params[:scanned_number].nil_or_empty?
+    def parse_pallet_or_carton_number(res = {}) # rubocop:disable Metrics/AbcSize
+      # TODO: - replace method with ScanCartonLabelOrPallet service
+      params = res.to_h
+      if params[:pallet_number]
+        params[:pallet_number] = MesscadaApp::ScannedPalletNumber.new(scanned_pallet_number: params[:pallet_number]).pallet_number
+        return params
+      end
+      raise Crossbeams::InfoError, 'scanned number not given' if params[:scanned_number].nil_or_empty?
 
-        if params[:scanned_number].length > 8
-          params[:pallet_number] = MesscadaApp::ScannedPalletNumber.new(scanned_pallet_number: params[:scanned_number]).pallet_number
-        else
-          params[:carton_number] = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: params[:scanned_number]).carton_number
-        end
-        params
+      if params[:scanned_number].length > 8
+        params[:pallet_number] = MesscadaApp::ScannedPalletNumber.new(scanned_pallet_number: params[:scanned_number]).pallet_number
+      else
+        params[:carton_number] = MesscadaApp::ScannedCartonNumber.new(scanned_carton_number: params[:scanned_number]).carton_number
+      end
+      params
     end
 
     def find_rmt_bin_by_tipped_asset_number(bin_number)
