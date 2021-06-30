@@ -5,10 +5,11 @@ module MesscadaApp
     attr_reader :repo, :params, :mode, :scanned_number, :formatted_number
 
     def initialize(params)
-      @params = params
-      @params = { scanned_number: params } unless params.is_a? Hash
-      @pallet_was_scanned = false
       @repo = MesscadaApp::MesscadaRepo.new
+      @pallet_was_scanned = false
+      @params = params.to_h
+    rescue NoMethodError
+      @params = { scanned_number: params.to_s }
     end
 
     TASKS = {
