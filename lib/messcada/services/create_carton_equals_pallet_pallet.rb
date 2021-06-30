@@ -16,7 +16,7 @@ module MesscadaApp
       res = create_pallet
       return failed_response(unwrap_failed_response(res)) unless res.success
 
-      success_response('ok', pallet_id: pallet_id, pallet_sequence_id: pallet_sequence_id)
+      success_response('ok', OpenStruct.new(pallet_id: pallet_id, pallet_sequence_id: pallet_sequence_id))
     end
 
     private

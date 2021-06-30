@@ -29,7 +29,7 @@ module MesscadaApp
       return validation_failed_response(res) if res.failure?
 
       carton_id = repo.create(:cartons, res)
-      success_response('ok', carton_id: carton_id)
+      success_response('ok', OpenStruct.new(carton_id: carton_id, carton_label_id: carton_label_id))
     end
 
     def carton_label_exists?

@@ -12,7 +12,7 @@ module MesscadaApp
     end
 
     def call
-      res = create_pallet_number_carton
+      res = create_carton_from_pallet_number
       return failed_response(unwrap_failed_response(res)) unless res.success
 
       res
@@ -20,7 +20,7 @@ module MesscadaApp
 
     private
 
-    def create_pallet_number_carton # rubocop:disable Metrics/AbcSize
+    def create_carton_from_pallet_number # rubocop:disable Metrics/AbcSize
       params[:carton_label_id] = repo.get_id(:carton_labels, pallet_number: pallet_number)
       return failed_response("Pallet number: #{pallet_number} could not be found on carton labels") if params[:carton_label_id].nil?
 
@@ -28,7 +28,7 @@ module MesscadaApp
       return validation_failed_response(res) if res.failure?
 
       carton_id = repo.create(:cartons, res)
-      success_response('ok', carton_id: carton_id)
+      success_response('ok', OpenStruct.new(carton_id: carton_id, carton_label_id: params[:carton_label_id]))
     end
   end
 end
