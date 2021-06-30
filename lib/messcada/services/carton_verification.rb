@@ -3,7 +3,7 @@
 module MesscadaApp
   class CartonVerification < BaseService
     attr_reader :repo, :user, :scanned_number, :palletizer_identifier, :palletizing_bay_resource_id,
-                :scanned, :pallet_number, :carton_label_id
+                :scanned, :carton_label_id, :carton_id, :pallet_sequence_id, :pallet_id, :pallet_number
 
     def initialize(user, scanned_number, palletizer_identifier = nil, palletizing_bay_resource_id = nil)
       @scanned_number = scanned_number
@@ -16,12 +16,11 @@ module MesscadaApp
     def call
       res = resolve_scanned_number_params
       return res unless res.success
-      return success_response("#{scanned[:scanned_type]} : #{scanned_number} already verified") if carton_exists? && pallet_exists?
 
       res = carton_verification
       return res unless res.success
 
-      success_response("Successfully verified #{scanned[:scanned_type]}: #{scanned_number}")
+      success_response("Successfully verified #{scanned[:scanned_type]}: #{scanned_number}", response_instance)
     end
 
     private
@@ -35,12 +34,10 @@ module MesscadaApp
 
       if scanned.pallet?
         @pallet_number = scanned.pallet_number
-        @carton_label_id = repo.carton_label_id_for_pallet_no(pallet_number)
+        @pallet_id = scanned.pallet_id
+        @carton_label_id = repo.get_id(:carton_labels, pallet_number: pallet_number)
       else
         @carton_label_id = scanned.carton_label_id
-        pallet_sequence_id = repo.carton_label_carton_palletizing_sequence(carton_label_id)
-        pallet_sequence_id ||= repo.carton_label_scanned_from_carton_sequence(carton_label_id)
-        @pallet_number = repo.get(:pallet_sequences, pallet_sequence_id, :pallet_number)
       end
       ok_response
     end
@@ -50,10 +47,16 @@ module MesscadaApp
         unless carton_exists?
           res = create_carton
           raise Crossbeams::InfoError, res.message unless res.success
+
+          @carton_id = res.instance.carton_id
         end
         unless pallet_exists?
           res = create_pallet
           raise Crossbeams::InfoError, res.message unless res.success
+
+          @pallet_id = res.instance.pallet_id
+          @pallet_sequence_id = res.instance.pallet_sequence_id
+          @pallet_number = repo.get(:pallets, pallet_id, :pallet_number)
         end
       end
 
@@ -69,7 +72,6 @@ module MesscadaApp
     end
 
     def create_pallet
-      carton_id = repo.get_id(:cartons, carton_label_id: carton_label_id)
       CreateCartonEqualsPalletPallet.call(user, carton_id, palletizing_bay_resource_id)
     end
 
@@ -84,16 +86,25 @@ module MesscadaApp
     end
 
     def carton_exists?
-      if scanned[:pallet_was_scanned]
-        ds = DB[:pallet_sequences].where(pallet_number: pallet_number)
-        repo.exists?(:cartons, pallet_sequence_id: ds.select_map(:id)) || !ds.select_map(:scanned_from_carton_id).empty?
-      else
-        repo.exists?(:cartons, carton_label_id: carton_label_id)
-      end
+      @carton_id ||= repo.get_id(:cartons, carton_label_id: carton_label_id)
+      !carton_id.nil? && !carton_label_id.nil?
     end
 
-    def pallet_exists?
-      repo.pallet_exists?(pallet_number) || !repo.get(:carton_labels, carton_label_id, :carton_equals_pallet)
+    def pallet_exists? # rubocop:disable Metrics/AbcSize
+      @pallet_sequence_id = repo.carton_label_carton_palletizing_sequence(carton_label_id)
+      @pallet_sequence_id ||= repo.carton_label_scanned_from_carton_sequence(carton_label_id)
+      @pallet_id ||= repo.get(:pallet_sequences, pallet_sequence_id, :pallet_id)
+      @pallet_number ||= repo.get(:pallet_sequences, pallet_sequence_id, :pallet_number)
+
+      !pallet_id.nil? && !pallet_sequence_id.nil?
+    end
+
+    def response_instance
+      OpenStruct.new(carton_label_id: carton_label_id,
+                     carton_id: carton_id,
+                     pallet_sequence_id: pallet_sequence_id,
+                     pallet_id: pallet_id,
+                     pallet_number: pallet_number)
     end
   end
 end

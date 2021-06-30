@@ -53,7 +53,7 @@ module MesscadaApp
       opts[:pallet_format_id] ||= create_pallet_format
       opts[:cartons_per_pallet_id] ||= create_cartons_per_pallet
       opts[:pm_bom_id] ||= create_pm_bom
-      opts[:packhouse_resource_id] ||= create_plant_resource(resource_properties: BaseRepo.new.hash_for_jsonb_col(packhouse_no: 1))
+      opts[:packhouse_resource_id] ||= create_plant_resource
       opts[:production_line_id] ||= create_plant_resource
       opts[:fruit_sticker_pm_product_id] ||= create_pm_product
       opts[:pm_type_id] ||= create_pm_type

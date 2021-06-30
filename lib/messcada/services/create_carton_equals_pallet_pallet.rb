@@ -2,8 +2,7 @@
 
 module MesscadaApp
   class CreateCartonEqualsPalletPallet < BaseService
-    attr_reader :repo, :carton_id, :carton, :pallet_id,
-                :pallet_sequence_id, :palletizing_bay_resource_id
+    attr_reader :repo, :carton_id, :carton, :pallet_id, :pallet_sequence_id, :palletizing_bay_resource_id
 
     def initialize(user, carton_id, palletizing_bay_resource_id = nil)
       @carton_id = carton_id
@@ -12,19 +11,24 @@ module MesscadaApp
       @repo = MesscadaApp::MesscadaRepo.new
     end
 
-    def call
+    def call # rubocop:disable Metrics/AbcSize
+      @carton = repo.find_carton(carton_id)
+      return failed_response("Carton : #{carton_id} not verified") unless carton
+      return success_response('Carton does not equal pallet', response_instance) unless carton_equals_pallet?
+
       res = create_pallet
       return failed_response(unwrap_failed_response(res)) unless res.success
 
-      success_response('ok', OpenStruct.new(pallet_id: pallet_id, pallet_sequence_id: pallet_sequence_id))
+      success_response('ok', response_instance)
     end
 
     private
 
-    def create_pallet # rubocop:disable Metrics/AbcSize
-      @carton = repo.find_carton(carton_id)
-      return failed_response("Carton : #{carton_id} not verified") unless carton
+    def response_instance
+      OpenStruct.new(pallet_id: pallet_id, pallet_sequence_id: pallet_sequence_id)
+    end
 
+    def create_pallet # rubocop:disable Metrics/AbcSize
       res = PalletContract.new.call(pallet_params)
       return validation_failed_response(res) if res.failure?
 
@@ -51,6 +55,11 @@ module MesscadaApp
         pallet_number: carton[:pallet_number],
         has_individual_cartons: false
       }
+    end
+
+    def carton_equals_pallet?
+      carton_label_id = repo.get(:cartons, carton_id, :carton_label_id)
+      repo.get(:carton_labels, carton_label_id, :carton_equals_pallet)
     end
   end
 end
