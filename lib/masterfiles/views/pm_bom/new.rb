@@ -4,7 +4,7 @@ module Masterfiles
   module Packaging
     module PmBom
       class New
-        def self.call(form_values: nil, form_errors: nil, remote: true)
+        def self.call(form_values: nil, form_errors: nil, remote: true) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:pm_bom, :new, form_values: form_values)
           rules   = ui_rule.compile
 

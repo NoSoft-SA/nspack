@@ -4,7 +4,7 @@ module Production
   module Production
     module Shift
       class SummaryReport
-        def self.call(employment_type, attrs, back_url:)
+        def self.call(employment_type, attrs, back_url:) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:shift, :summary_report, employment_type: employment_type, attrs: attrs)
           rules   = ui_rule.compile
 

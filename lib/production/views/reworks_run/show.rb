@@ -4,7 +4,7 @@ module Production
   module Reworks
     module ReworksRun
       class Show
-        def self.call(id)
+        def self.call(id) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:reworks_run, :show, id: id)
           rules   = ui_rule.compile
 

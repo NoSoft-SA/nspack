@@ -4,7 +4,7 @@ module Production
   module Reworks
     module ReworksRun
       class CloneSequence
-        def self.call(id, reworks_run_type_id, back_url:, form_values: nil, form_errors: nil)
+        def self.call(id, reworks_run_type_id, back_url:, form_values: nil, form_errors: nil) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:reworks_run_sequence, :clone_sequence, reworks_run_type_id: reworks_run_type_id, pallet_sequence_id: id, form_values: form_values)
           rules = ui_rule.compile
 

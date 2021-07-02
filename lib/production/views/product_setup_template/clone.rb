@@ -4,7 +4,7 @@ module Production
   module ProductSetups
     module ProductSetupTemplate
       class Clone
-        def self.call(id, form_values: nil, form_errors: nil)
+        def self.call(id, form_values: nil, form_errors: nil) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:product_setup_template, :clone, id: id, form_values: form_values)
           rules   = ui_rule.compile
 

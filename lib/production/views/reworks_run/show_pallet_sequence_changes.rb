@@ -4,7 +4,7 @@ module Production
   module Reworks
     module ReworksRun
       class ShowPalletSequenceChanges
-        def self.call(id, attrs, back_url:)
+        def self.call(id, attrs, back_url:) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:reworks_run_pallet, :show_changes, id: id, attrs: attrs)
           rules   = ui_rule.compile
 

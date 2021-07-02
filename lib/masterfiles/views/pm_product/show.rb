@@ -4,7 +4,7 @@ module Masterfiles
   module Packaging
     module PmProduct
       class Show
-        def self.call(id)
+        def self.call(id) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:pm_product, :show, id: id)
           rules   = ui_rule.compile
 

@@ -4,7 +4,7 @@ module RawMaterials
   module Deliveries
     module RmtDelivery
       class Show
-        def self.call(id, back_url:)
+        def self.call(id, back_url:) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:rmt_delivery, :show, id: id)
           rules   = ui_rule.compile
 

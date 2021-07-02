@@ -4,7 +4,7 @@ module Production
   module Reworks
     module ReworksRun
       class EditRmtBinGrossWeight
-        def self.call(reworks_run_type_id, bin_number,  form_values: nil, form_errors: nil, back_url:)
+        def self.call(reworks_run_type_id, bin_number,  form_values: nil, form_errors: nil, back_url:) # rubocop:disable Metrics/AbcSize
           ui_rule = UiRules::Compiler.new(:reworks_run_rmt_bin, :set_rmt_bin_gross_weight, bin_number: bin_number, reworks_run_type_id: reworks_run_type_id, form_values: form_values)
           rules   = ui_rule.compile
 

@@ -4,7 +4,7 @@ module Development
   module Generators
     module Scaffolds
       class Show
-        def self.call(results) # rubocop:disable Metrics/CyclomaticComplexity
+        def self.call(results) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
           ui_rule = UiRules::Compiler.new(:scaffolds, :new)
           rules   = ui_rule.compile
 
