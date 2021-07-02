@@ -2,7 +2,7 @@
 
 module FinishedGoodsApp
   module LoadFactory
-    def create_load(opts = {}) # rubocop:disable Metrics/AbcSize
+    def create_load(opts = {})
       id = get_available_factory_record(:loads, opts)
       return id unless id.nil?
 
@@ -41,7 +41,7 @@ module FinishedGoodsApp
       DB[:loads].insert(default.merge(opts))
     end
 
-    def create_load_voyage(opts = {}) # rubocop:disable Metrics/AbcSize
+    def create_load_voyage(opts = {})
       id = get_available_factory_record(:load_voyages, opts)
       return id unless id.nil?
 
@@ -60,7 +60,7 @@ module FinishedGoodsApp
       DB[:load_voyages].insert(default.merge(opts))
     end
 
-    def create_load_vehicle(opts = {}) # rubocop:disable Metrics/AbcSize
+    def create_load_vehicle(opts = {})
       id = get_available_factory_record(:load_vehicles, opts)
       return id unless id.nil?
 
