@@ -4,7 +4,7 @@ module Production
   module Reworks
     module ReworksRun
       class PrintReworksLabel
-        def self.call(id, pallet_number, carton_label, form_values: nil, form_errors: nil) # rubocop:disable Metrics/AbcSize
+        def self.call(id, pallet_number, carton_label, form_values: nil, form_errors: nil)
           ui_rule = UiRules::Compiler.new(:reworks_run_print, :print_barcode, id: id, pallet_number: pallet_number, form_values: form_values, carton_label: carton_label)
           rules   = ui_rule.compile
 

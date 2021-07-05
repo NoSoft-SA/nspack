@@ -4,7 +4,7 @@ module Production
   module ProductSetups
     module ProductSetup
       class Show
-        def self.call(id, back_url: nil) # rubocop:disable Metrics/AbcSize
+        def self.call(id, back_url: nil)
           ui_rule = UiRules::Compiler.new(:product_setup, :show, id: id)
           rules   = ui_rule.compile
           layout = Crossbeams::Layout::Page.build(rules) do |page|

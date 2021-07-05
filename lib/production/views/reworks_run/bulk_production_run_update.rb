@@ -4,7 +4,7 @@ module Production
   module Reworks
     module ReworksRun
       class BulkProductionRunUpdate
-        def self.call(id, attrs) # rubocop:disable Metrics/AbcSize
+        def self.call(id, attrs)
           ui_rule = UiRules::Compiler.new(:reworks_run_bulk_update, :production_run_bulk_update, id: id, attrs: attrs)
           rules   = ui_rule.compile
 

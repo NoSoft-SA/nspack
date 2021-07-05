@@ -4,7 +4,7 @@ module Production
   module Reworks
     module ReworksRun
       class ChangeBinDeliveryDetails
-        def self.call(attrs) # rubocop:disable Metrics/AbcSize
+        def self.call(attrs)
           ui_rule = UiRules::Compiler.new(:change_bin_delivery, :details, attrs: attrs)
           rules   = ui_rule.compile
 

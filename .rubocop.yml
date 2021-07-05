@@ -61,6 +61,7 @@ Metrics/AbcSize:
   Max: 17
   Exclude:
     - '**/factories/*.rb'
+    - '**/lib/**/views/**/*.rb'
     - '**/test_*.rb'
 
 # TODO: Remove the Max option when upgrading beyond 0.89
