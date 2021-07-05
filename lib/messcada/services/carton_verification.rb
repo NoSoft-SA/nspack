@@ -50,7 +50,7 @@ module MesscadaApp
 
           @carton_id = res.instance.carton_id
         end
-        unless pallet_exists?
+        if carton_equals_pallet?
           res = create_pallet
           raise Crossbeams::InfoError, res.message unless res.success
 
@@ -72,6 +72,8 @@ module MesscadaApp
     end
 
     def create_pallet
+      return ok_response if pallet_exists?
+
       CreateCartonEqualsPalletPallet.call(user, carton_id, palletizing_bay_resource_id)
     end
 
@@ -83,6 +85,11 @@ module MesscadaApp
         params[:palletizer_contract_worker_id] = hr_repo.contract_worker_id_from_personnel_id(palletizer_identifier_id)
       end
       params
+    end
+
+    def carton_equals_pallet?
+      carton_label_id = repo.get(:cartons, carton_id, :carton_label_id)
+      repo.get(:carton_labels, carton_label_id, :carton_equals_pallet)
     end
 
     def carton_exists?
