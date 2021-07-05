@@ -34,6 +34,7 @@ module MesscadaApp
 
     def test_carton_verification_scan_carton_label
       carton_label_id = create_carton_label
+      start_pallets = DB[:pallets].count
 
       scanned_number = carton_label_id
       res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
@@ -41,6 +42,21 @@ module MesscadaApp
 
       res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
       assert res.success, 'Revalidation should return success'
+
+      end_pallets = DB[:pallets].count
+      assert_equal start_pallets, end_pallets, "Carton verification should not create a pallet: was #{start_pallets}, now: #{end_pallets}"
+    end
+
+    def test_carton_verification_scan_carton_label_and_create_pallet
+      carton_label_id = create_carton_label(carton_equals_pallet: true)
+      start_pallets = DB[:pallets].count
+      scanned_number = carton_label_id
+
+      res = MesscadaApp::CartonVerification.call(current_user, scanned_number)
+      assert res.success, 'Should be able to verify carton'
+
+      end_pallets = DB[:pallets].count
+      assert_equal start_pallets + 1, end_pallets, "Carton verification should create one pallet: was #{start_pallets}, now: #{end_pallets}"
     end
 
     def test_carton_verification_scan_pallet
