@@ -11,7 +11,7 @@ module MesscadaApp
       @repo = MesscadaApp::MesscadaRepo.new
     end
 
-    def call # rubocop:disable Metrics/AbcSize
+    def call
       @carton = repo.find_carton(carton_id)
       return failed_response("Carton : #{carton_id} not verified") unless carton
       return success_response('Carton does not equal pallet', response_instance) unless carton_equals_pallet?
@@ -28,7 +28,7 @@ module MesscadaApp
       OpenStruct.new(pallet_id: pallet_id, pallet_sequence_id: pallet_sequence_id)
     end
 
-    def create_pallet # rubocop:disable Metrics/AbcSize
+    def create_pallet
       res = PalletContract.new.call(pallet_params)
       return validation_failed_response(res) if res.failure?
 
@@ -41,7 +41,7 @@ module MesscadaApp
       ok_response
     end
 
-    def pallet_params # rubocop:disable Metrics/AbcSize
+    def pallet_params
       {
         status: AppConst::PALLETIZED_NEW_PALLET,
         partially_palletized: false,

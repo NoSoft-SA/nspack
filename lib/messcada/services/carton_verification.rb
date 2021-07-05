@@ -25,7 +25,7 @@ module MesscadaApp
 
     private
 
-    def resolve_scanned_number_params # rubocop:disable Metrics/AbcSize
+    def resolve_scanned_number_params
       res = ScanCartonLabelOrPallet.call(scanned_number)
       return res unless res.success
 

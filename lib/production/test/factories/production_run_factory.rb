@@ -51,7 +51,7 @@ module ProductionApp
       DB[:production_regions].insert(default.merge(opts))
     end
 
-    def create_product_resource_allocation(opts = {}) # rubocop:disable Metrics/AbcSize
+    def create_product_resource_allocation(opts = {})
       id = get_available_factory_record(:product_resource_allocations, opts)
       return id unless id.nil?
 

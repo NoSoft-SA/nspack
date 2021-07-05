@@ -722,16 +722,6 @@ module MesscadaApp
         .get(Sequel[:pallet_sequences][:id])
     end
 
-    def pallet_number_carton_exists?(pallet_number)
-      pallet_sequence_ids = DB[:pallet_sequences].where(pallet_number: pallet_number).select_map(:id)
-      return false if pallet_sequence_ids.nil_or_empty?
-
-      return true if exists?(:cartons, pallet_sequence_id: pallet_sequence_ids)
-
-      scanned_cartons = get(:pallet_sequences, pallet_sequence_ids, :scanned_from_carton_id)
-      !scanned_cartons.nil_or_empty?
-    end
-
     def can_pallet_become_rebin?(pallet_number)
       !DB[:cartons]
         .select(:carton_label_id)

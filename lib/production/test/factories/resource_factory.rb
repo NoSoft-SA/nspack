@@ -2,7 +2,7 @@
 
 module ProductionApp
   module ResourceFactory
-    def create_plant_resource(opts = {}) # rubocop:disable Metrics/AbcSize
+    def create_plant_resource(opts = {})
       id = get_available_factory_record(:plant_resources, opts)
       return id unless id.nil?
 
