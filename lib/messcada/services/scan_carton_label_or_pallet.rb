@@ -52,7 +52,7 @@ module MesscadaApp
       @mode ||= determine_mode
 
       invalid_keys = params.keys
-      raise ArgumentError, "Invalid argument: #{invalid_keys}" unless invalid_keys.empty?
+      raise ArgumentError, "Invalid argument: #{invalid_keys}" if @mode.nil?
     end
 
     def determine_mode

@@ -64,7 +64,7 @@ module MesscadaApp
           return failed_response "Pallet id: #{errors.join(', ')} doesn't exist." unless errors.empty?
         end
 
-        return failed_response 'No pallets where given to check.' if pallet_ids.nil_or_empty?
+        return failed_response 'No pallets found.' if pallet_ids.nil_or_empty?
 
         all_ok
       end
