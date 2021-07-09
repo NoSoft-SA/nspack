@@ -55,9 +55,12 @@ module FinishedGoodsApp
     def move_carton(params, pallet_buildup_id) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       return validation_failed_response(messages: { carton_number: ['field cannot be empty'] }) if params[:carton_number].nil_or_empty?
 
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(params[:carton_number])
+      return res unless res.success
+
+      params[:carton_number] = res.instance.carton_label_id
       carton = ProductionApp::ProductionRunRepo.new.find_carton_by_carton_label_id(params[:carton_number])
       return failed_response("Carton:#{params[:carton_number]} does not exist") unless carton
-
       return failed_response("Carton:#{params[:carton_number]} does not belong to any of the source pallets") unless repo.buildup_carton?(params[:carton_number], pallet_buildup_id)
 
       # Remove Carton
