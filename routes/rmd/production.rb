@@ -37,7 +37,7 @@ class Nspack < Roda
         end
 
         r.post do
-          res = interactor.scan_pallet_or_carton_number(params[:pallet_inquiry])
+          res = interactor.find_pallet_by_scanning_pallet_or_carton_number(params[:pallet_inquiry])
           if res.success
             r.redirect("/rmd/production/pallet_inquiry/view_pallet/#{res.instance.id}")
           else
@@ -169,7 +169,7 @@ class Nspack < Roda
         end
 
         r.post do
-          res = interactor.carton_to_be_verified(params[:combined_verification])
+          res = interactor.combined_verification_scan(params[:combined_verification])
           if res.success
             r.redirect("/rmd/production/pallet_verification/verify_pallet_sequence/#{res.instance}")
           else
@@ -621,7 +621,7 @@ class Nspack < Roda
         end
 
         r.post do
-          res = messcada_interactor.scan_pallet_or_carton_number(params[:add_sequence_to_pallet])
+          res = messcada_interactor.find_pallet_by_scanning_pallet_or_carton_number(params[:add_sequence_to_pallet])
           if res.success
             pallet = res.instance
             messcada_interactor.assert_permission!(:not_have_individual_cartons, pallet.pallet_number)
@@ -1099,7 +1099,7 @@ class Nspack < Roda
         end
 
         r.post do
-          res = messcada_interactor.scan_pallet_or_carton_number(params[:edit_pallet])
+          res = messcada_interactor.find_pallet_by_scanning_pallet_or_carton_number(params[:edit_pallet])
           if res.success
             pallet = res.instance
             res = interactor.edit_pallet_validations(pallet.pallet_number)
@@ -1171,7 +1171,7 @@ class Nspack < Roda
       end
 
       r.post do
-        res = messcada_interactor.scan_pallet_or_carton_number(params[:reprint_pallet_label])
+        res = messcada_interactor.find_pallet_by_scanning_pallet_or_carton_number(params[:reprint_pallet_label])
         if res.success
           res = interactor.print_pallet_label_from_sequence(res.instance.pallet_sequence_ids.first,
                                                             pallet_label_name: params[:reprint_pallet_label][:pallet_label_name],
