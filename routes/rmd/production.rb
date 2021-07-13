@@ -529,12 +529,11 @@ class Nspack < Roda
       end
 
       r.on 'add_sequence_to_pallet_submit', Integer do |id|
-        val_res = interactor.validate_carton_number_for_palletizing(params[:pallet][:carton_number])
-        if val_res.success
-          carton_number = val_res.instance
+        carton_number = params[:pallet][:carton_number]
           store_locally(:current_form_state, { carton_number: carton_number,
                                                carton_quantity: params[:pallet][:carton_quantity] })
-
+        val_res = interactor.validate_carton_number_for_palletizing(carton_number)
+        if val_res.success
           r.redirect("/rmd/production/palletizing/add_carton_label_to_pallet/#{id}")
         else
           store_locally(:errors, errors: val_res.errors, error_message: unwrap_failed_response(val_res))
