@@ -60,10 +60,10 @@ module ProductionApp
     end
 
     def validate_carton_number_for_palletizing(scanned_number)
-      scanned = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
-      return scanned unless scanned.success
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
+      return res unless res.success
 
-      carton_number = scanned.carton_label_id
+      carton_number = res.instance.carton_label_id
       res = UtilityFunctions.validate_integer_length(:carton_number, carton_number)
       return failed_response("Value #{carton_number} is too big to be a carton. Perhaps you scanned a pallet number?") if res.failure?
 

@@ -28,21 +28,20 @@ module MesscadaApp
       send(scan_mode)
       return failed_response("Failed to find #{@mode} number: #{@scanned_number}") unless @id
 
-      success_response
+      success_response("Successfully scanned #{@mode} number", build_entity)
     rescue Crossbeams::InfoError => e
       failed_response(e.message)
     end
 
     private
 
-    def success_response
+    def build_entity
       ScanCartonLabelOrPalletEntity.new(
         id: @id,
         pallet_was_scanned: @pallet_was_scanned,
         scanned_number: @scanned_number,
         formatted_number: @formatted_number,
-        scanned_type: @mode.to_s,
-        message: "Successfully scanned #{@mode} number"
+        scanned_type: @mode.to_s
       )
     end
 

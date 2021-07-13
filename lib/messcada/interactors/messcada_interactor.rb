@@ -19,9 +19,10 @@ module MesscadaApp
     # end
 
     def pallet_to_be_verified(params)
-      scanned = MesscadaApp::ScanCartonLabelOrPallet.call(params)
-      return scanned unless scanned.success
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(params)
+      return res unless res.success
 
+      scanned = res.instance
       # params = repo.parse_pallet_or_carton_number(params)
       # if params[:carton_number]
       #   pallet = repo.find_pallet_by_carton_number(params[:carton_number])
@@ -55,9 +56,10 @@ module MesscadaApp
       #            repo.find_pallet_by_pallet_number(args[:pallet_number])
       #          end
 
-      scanned = MesscadaApp::ScanCartonLabelOrPallet.call(params)
-      return scanned unless scanned.success
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(params)
+      return res unless res.success
 
+      scanned = res.instance
       return failed_response('Carton verification failed to create pallet.') if scanned.pallet_id.nil?
 
       success_response('Verified Carton', scanned.pallet_sequence_id)
@@ -66,8 +68,10 @@ module MesscadaApp
     end
 
     def find_pallet_by_scanning_pallet_or_carton_number(params)
-      scanned = MesscadaApp::ScanCartonLabelOrPallet.call(params)
-      return scanned unless scanned.success
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(params)
+      return res unless res.success
+
+      scanned = res.instance
 
       # def scan_pallet_or_carton_number(params)
       #   params = repo.parse_pallet_or_carton_number(params)

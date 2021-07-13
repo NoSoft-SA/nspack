@@ -448,9 +448,10 @@ module FinishedGoodsApp
     end
 
     def validate_add_pallet_govt_inspection_params(id, params) # rubocop:disable Metrics/AbcSize
-      scanned = MesscadaApp::ScanCartonLabelOrPallet.call(params[:scanned_number])
-      return scanned unless scanned.success
+      res = MesscadaApp::ScanCartonLabelOrPallet.call(params[:scanned_number])
+      return res unless res.success
 
+      scanned = res.instance
       pallet_number = scanned.pallet_number
 
       check_pallet!(:not_shipped, pallet_number)
