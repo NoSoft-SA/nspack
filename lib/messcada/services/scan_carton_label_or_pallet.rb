@@ -26,7 +26,7 @@ module MesscadaApp
       raise ArgumentError, "Scan mode \"#{mode}\" is unknown for #{self.class}." if scan_mode.nil?
 
       send(scan_mode)
-      return failed_response('Failed to scan number') unless @id
+      return failed_response("Failed to find #{@mode} number: #{@scanned_number}") unless @id
 
       success_response("Successfully scanned #{@mode} number", build_entity)
     rescue Crossbeams::InfoError => e
