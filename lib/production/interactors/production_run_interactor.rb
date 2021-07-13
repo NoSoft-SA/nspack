@@ -91,8 +91,8 @@ module ProductionApp
       failed_response(e.message)
     end
 
-    def find_carton_by_carton_label_id(carton_label_id)
-      repo.find_carton_by_carton_label_id(carton_label_id)
+    def get_carton_id_from_carton_label_id(carton_label_id)
+      repo.get_id(:cartons, carton_label_id: carton_label_id)
     end
 
     def create_pallet_from_carton(carton_id) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
