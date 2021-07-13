@@ -59,8 +59,8 @@ module ProductionApp
       failed_response(e.message)
     end
 
-    def validate_carton_number_for_palletizing(carton_number)
-      scanned = MesscadaApp::ScanCartonLabelOrPallet.call(carton_number)
+    def validate_carton_number_for_palletizing(scanned_number)
+      scanned = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number)
       return scanned unless scanned.success
 
       carton_number = scanned.instance.carton_label_id
