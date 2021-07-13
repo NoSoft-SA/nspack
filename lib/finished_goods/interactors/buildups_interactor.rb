@@ -58,7 +58,7 @@ module FinishedGoodsApp
       res = MesscadaApp::ScanCartonLabelOrPallet.call(params[:carton_number])
       return res unless res.success
 
-      params[:carton_number] = res.instance.carton_label_id
+      params[:carton_number] = res.carton_label_id
       carton = ProductionApp::ProductionRunRepo.new.find_carton_by_carton_label_id(params[:carton_number])
       return failed_response("Carton:#{params[:carton_number]} does not exist") unless carton
       return failed_response("Carton:#{params[:carton_number]} does not belong to any of the source pallets") unless repo.buildup_carton?(params[:carton_number], pallet_buildup_id)

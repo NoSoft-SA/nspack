@@ -11,19 +11,19 @@ module MasterfilesApp
       valid_9_digit_pallet_numbers.each do |scanned_number|
         res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
         assert res.success, 'Should be able to scan a pallet'
-        assert_equal scanned_number, res.instance[:scanned_number]
-        assert_equal scanned_number[-9, 9], res.instance[:formatted_number]
-        assert_equal 1, res.instance.pallet_id
-        assert_nil res.instance.carton_label_id
+        assert_equal scanned_number, res.scanned_number
+        assert_equal scanned_number[-9, 9], res.formatted_number
+        assert_equal 1, res.pallet_id
+        assert_nil res.carton_label_id
       end
 
       valid_18_digit_pallet_numbers.each do |scanned_number|
         res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
         assert res.success, 'Should be able to scan a pallet'
-        assert_equal scanned_number, res.instance[:scanned_number]
-        assert_equal scanned_number[-18, 18], res.instance[:formatted_number]
-        assert_equal 1, res.instance.pallet_id
-        assert_nil res.instance.carton_label_id
+        assert_equal scanned_number, res.scanned_number
+        assert_equal scanned_number[-18, 18], res.formatted_number
+        assert_equal 1, res.pallet_id
+        assert_nil res.carton_label_id
       end
     end
 
@@ -47,10 +47,10 @@ module MasterfilesApp
       scanned_number = valid_carton_number
       res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
       assert res.success, 'Should be able to scan a carton'
-      assert_equal scanned_number, res.instance[:scanned_number]
-      assert_equal scanned_number, res.instance[:formatted_number]
-      assert_equal 1, res.instance.carton_label_id
-      assert_nil res.instance.pallet_id
+      assert_equal scanned_number, res.scanned_number
+      assert_equal scanned_number, res.formatted_number
+      assert_equal 1, res.carton_label_id
+      assert_nil res.pallet_id
     end
 
     def test_scan_carton_with_mode
@@ -58,7 +58,7 @@ module MasterfilesApp
       scanned_number = valid_carton_number
       res = MesscadaApp::ScanCartonLabelOrPallet.call(carton_label_id: scanned_number)
       assert res.success, 'Should be able to scan a carton'
-      assert_equal scanned_number, res.instance[:scanned_number]
+      assert_equal scanned_number, res.scanned_number
     end
 
     def test_scan_carton_fail
@@ -71,10 +71,10 @@ module MasterfilesApp
       scanned_number = valid_legacy_carton_number
       res = MesscadaApp::ScanCartonLabelOrPallet.call(scanned_number: scanned_number)
       assert res.success, 'Should be able to scan a legacy carton'
-      assert_equal scanned_number, res.instance[:scanned_number]
-      assert_equal scanned_number, res.instance[:formatted_number]
-      assert_equal 1, res.instance.carton_label_id
-      assert_nil res.instance.pallet_id
+      assert_equal scanned_number, res.scanned_number
+      assert_equal scanned_number, res.formatted_number
+      assert_equal 1, res.carton_label_id
+      assert_nil res.pallet_id
     end
 
     def test_scan_legacy_carton_with_mode
@@ -82,7 +82,7 @@ module MasterfilesApp
       scanned_number = valid_legacy_carton_number
       res = MesscadaApp::ScanCartonLabelOrPallet.call(legacy_carton_number: scanned_number)
       assert res.success, 'Should be able to scan a legacy carton'
-      assert_equal scanned_number, res.instance[:scanned_number]
+      assert_equal scanned_number, res.scanned_number
     end
 
     def test_scan_legacy_carton_fail

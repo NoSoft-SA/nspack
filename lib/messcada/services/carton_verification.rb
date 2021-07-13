@@ -26,12 +26,10 @@ module MesscadaApp
     private
 
     def resolve_scanned_number_params
-      res = ScanCartonLabelOrPallet.call(scanned_number)
-      return res unless res.success
+      scanned = ScanCartonLabelOrPallet.call(scanned_number)
+      return scanned unless scanned.success
 
-      scanned = res.instance
       @scanned = scanned.to_h
-
       if scanned.pallet?
         @pallet_number = scanned.pallet_number
         @pallet_id = scanned.pallet_id

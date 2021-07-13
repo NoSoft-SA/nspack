@@ -7,6 +7,11 @@ module MesscadaApp
     attribute :formatted_number, Types::String
     attribute :scanned_number, Types::String
     attribute :scanned_type, Types::String
+    attribute :message, Types::String
+
+    def success
+      true
+    end
 
     def pallet?
       pallet_was_scanned
